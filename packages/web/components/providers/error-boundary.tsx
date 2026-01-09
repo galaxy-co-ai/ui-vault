@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface ErrorBoundaryProps {
@@ -28,7 +28,7 @@ interface ErrorBoundaryState {
  *   <MyComponent />
  * </ErrorBoundary>
  */
-export class ErrorBoundary extends React.Component<
+class ErrorBoundaryClass extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
@@ -54,17 +54,24 @@ export class ErrorBoundary extends React.Component<
     this.setState({ hasError: false, error: null });
   };
 
-  render(): React.ReactNode {
+  render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback;
+        return <>{this.props.fallback}</>;
       }
 
       return <DefaultErrorFallback onReset={this.handleReset} />;
     }
 
-    return this.props.children;
+    return <>{this.props.children}</>;
   }
+}
+
+// Wrapper to fix React 19 type compatibility issues with class components
+export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
+  return (
+    <ErrorBoundaryClass fallback={fallback}>{children}</ErrorBoundaryClass>
+  );
 }
 
 interface DefaultErrorFallbackProps {
