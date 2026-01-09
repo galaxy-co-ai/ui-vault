@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/client";
 import { logger } from "@/lib/logger";
 
@@ -69,13 +70,13 @@ export async function POST(
         styleId: id,
         versionNumber: nextVersionNumber,
         name: currentStyle.name,
-        colorsLight: currentStyle.colorsLight,
-        colorsDark: currentStyle.colorsDark,
-        typography: currentStyle.typography,
-        spacing: currentStyle.spacing,
-        borderRadius: currentStyle.borderRadius,
-        shadows: currentStyle.shadows,
-        animation: currentStyle.animation,
+        colorsLight: currentStyle.colorsLight as Prisma.InputJsonValue,
+        colorsDark: currentStyle.colorsDark as Prisma.InputJsonValue,
+        typography: currentStyle.typography as Prisma.InputJsonValue,
+        spacing: currentStyle.spacing as Prisma.InputJsonValue,
+        borderRadius: currentStyle.borderRadius as Prisma.InputJsonValue,
+        shadows: currentStyle.shadows as Prisma.InputJsonValue,
+        animation: currentStyle.animation as Prisma.InputJsonValue,
         changeNote: `Backup before restoring to v${version.versionNumber}`,
       },
     });
@@ -85,13 +86,13 @@ export async function POST(
       where: { id },
       data: {
         name: version.name,
-        colorsLight: version.colorsLight,
-        colorsDark: version.colorsDark,
-        typography: version.typography,
-        spacing: version.spacing,
-        borderRadius: version.borderRadius,
-        shadows: version.shadows,
-        animation: version.animation,
+        colorsLight: version.colorsLight as Prisma.InputJsonValue,
+        colorsDark: version.colorsDark as Prisma.InputJsonValue,
+        typography: version.typography as Prisma.InputJsonValue,
+        spacing: version.spacing as Prisma.InputJsonValue,
+        borderRadius: version.borderRadius as Prisma.InputJsonValue,
+        shadows: version.shadows as Prisma.InputJsonValue,
+        animation: version.animation as Prisma.InputJsonValue,
         updatedAt: new Date(),
       },
     });
