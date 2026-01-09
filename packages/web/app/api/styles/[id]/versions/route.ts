@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/client";
 import { logger } from "@/lib/logger";
 
@@ -80,13 +81,13 @@ export async function POST(
         styleId: id,
         versionNumber: nextVersionNumber,
         name: style.name,
-        colorsLight: style.colorsLight,
-        colorsDark: style.colorsDark,
-        typography: style.typography,
-        spacing: style.spacing,
-        borderRadius: style.borderRadius,
-        shadows: style.shadows,
-        animation: style.animation,
+        colorsLight: style.colorsLight as Prisma.InputJsonValue,
+        colorsDark: style.colorsDark as Prisma.InputJsonValue,
+        typography: style.typography as Prisma.InputJsonValue,
+        spacing: style.spacing as Prisma.InputJsonValue,
+        borderRadius: style.borderRadius as Prisma.InputJsonValue,
+        shadows: style.shadows as Prisma.InputJsonValue,
+        animation: style.animation as Prisma.InputJsonValue,
         changeNote: changeNote || null,
       },
       select: {
