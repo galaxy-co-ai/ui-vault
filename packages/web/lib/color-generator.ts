@@ -15,7 +15,7 @@ interface HSL {
   l: number; // 0-100
 }
 
-interface RGB {
+export interface RGB {
   r: number; // 0-255
   g: number; // 0-255
   b: number; // 0-255
@@ -30,9 +30,9 @@ export function hexToRgb(hex: string): RGB {
     return { r: 0, g: 0, b: 0 };
   }
   return {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
+    r: parseInt(result[1] ?? "0", 16),
+    g: parseInt(result[2] ?? "0", 16),
+    b: parseInt(result[3] ?? "0", 16),
   };
 }
 

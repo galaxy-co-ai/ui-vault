@@ -124,7 +124,7 @@ export default function NewStylePage() {
                 <div className="mt-4 space-y-2">
                   <DetailRow
                     label="Font Family"
-                    value={selectedTemplate.typography.fontFamily.sans.split(",")[0]}
+                    value={selectedTemplate.typography.fontFamily.sans.split(",")[0] ?? "System"}
                   />
                   <DetailRow
                     label="Border Radius"

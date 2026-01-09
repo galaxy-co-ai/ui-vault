@@ -18,14 +18,14 @@ export { hexToRgb };
  * @see https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
  */
 export function getRelativeLuminance(rgb: RGB): number {
-  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map((channel) => {
+  const channels = [rgb.r, rgb.g, rgb.b].map((channel) => {
     const sRGB = channel / 255;
     return sRGB <= 0.03928
       ? sRGB / 12.92
       : Math.pow((sRGB + 0.055) / 1.055, 2.4);
   });
 
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return 0.2126 * (channels[0] ?? 0) + 0.7152 * (channels[1] ?? 0) + 0.0722 * (channels[2] ?? 0);
 }
 
 /**
@@ -256,32 +256,31 @@ export function auditPalette(
   const issues: AccessibilityIssue[] = [];
 
   // Determine background colors based on mode
-  const bgColor = isDarkMode ? palette.gray["950"] : palette.gray["50"];
-  const cardBg = isDarkMode ? palette.gray["900"] : palette.gray["100"];
+  const bgColor = isDarkMode ? (palette.gray["950"] ?? "#000000") : (palette.gray["50"] ?? "#FFFFFF");
 
   // Check text colors against backgrounds
-  const textChecks = [
+  const textChecks: Array<{ fg: string; bg: string; name: string; id: string }> = [
     {
-      fg: palette.gray["900"],
+      fg: palette.gray["900"] ?? "#000000",
       bg: bgColor,
       name: "Dark text on background",
       id: "text-dark-on-bg",
     },
     {
-      fg: palette.gray["700"],
+      fg: palette.gray["700"] ?? "#333333",
       bg: bgColor,
       name: "Muted text on background",
       id: "text-muted-on-bg",
     },
     {
-      fg: palette.accent.text,
+      fg: palette.accent.text ?? "#000000",
       bg: bgColor,
       name: "Accent text on background",
       id: "accent-text-on-bg",
     },
     {
-      fg: palette.accent.text,
-      bg: palette.accent.subtle,
+      fg: palette.accent.text ?? "#000000",
+      bg: palette.accent.subtle ?? "#FFFFFF",
       name: "Accent text on accent subtle",
       id: "accent-text-on-subtle",
     },
@@ -291,13 +290,13 @@ export function auditPalette(
     // In dark mode, check light text on dark backgrounds
     textChecks.push(
       {
-        fg: palette.gray["100"],
+        fg: palette.gray["100"] ?? "#FFFFFF",
         bg: bgColor,
         name: "Light text on background",
         id: "text-light-on-bg",
       },
       {
-        fg: palette.gray["300"],
+        fg: palette.gray["300"] ?? "#CCCCCC",
         bg: bgColor,
         name: "Muted light text on background",
         id: "text-muted-light-on-bg",
@@ -335,11 +334,11 @@ export function auditPalette(
   }
 
   // Check semantic colors
-  const semanticChecks = [
-    { color: palette.semantic.success, name: "Success", id: "semantic-success" },
-    { color: palette.semantic.warning, name: "Warning", id: "semantic-warning" },
-    { color: palette.semantic.error, name: "Error", id: "semantic-error" },
-    { color: palette.semantic.info, name: "Info", id: "semantic-info" },
+  const semanticChecks: Array<{ color: string; name: string; id: string }> = [
+    { color: palette.semantic.success ?? "#22C55E", name: "Success", id: "semantic-success" },
+    { color: palette.semantic.warning ?? "#EAB308", name: "Warning", id: "semantic-warning" },
+    { color: palette.semantic.error ?? "#EF4444", name: "Error", id: "semantic-error" },
+    { color: palette.semantic.info ?? "#3B82F6", name: "Info", id: "semantic-info" },
   ];
 
   for (const check of semanticChecks) {

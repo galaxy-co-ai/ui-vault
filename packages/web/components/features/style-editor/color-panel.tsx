@@ -7,7 +7,6 @@ import {
   generatePaletteFromSeed,
   generateAccentShades,
   generateDarkAccentShades,
-  generateGrayScale,
   PALETTE_PRESETS,
   type PalettePreset,
 } from "@/lib/color-generator";

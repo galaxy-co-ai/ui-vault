@@ -40,8 +40,9 @@ export function AccessibilityPanel({
     if (!issue.suggestion) return;
 
     // Determine which color group and key to update based on issue id
-    const [group, ...keyParts] = issue.id.split("-");
-    const key = keyParts.join("-");
+    const [_group, ..._keyParts] = issue.id.split("-");
+    void _group;
+    void _keyParts;
 
     // For now, we'll update the foreground color since that's what we're suggesting
     // A more sophisticated approach would determine which color needs changing

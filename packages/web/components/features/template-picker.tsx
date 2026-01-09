@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Check } from "lucide-react";
 import { TEMPLATES, type StyleTemplate } from "@/lib/templates";
 
@@ -31,14 +30,10 @@ interface TemplateCardProps {
 }
 
 function TemplateCard({ template, isSelected, onSelect }: TemplateCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <button
       type="button"
       onClick={onSelect}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={`group relative flex flex-col overflow-hidden rounded-lg border-2 bg-card text-left transition-all ${
         isSelected
           ? "border-primary ring-2 ring-primary/20"
