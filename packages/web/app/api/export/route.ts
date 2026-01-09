@@ -30,6 +30,10 @@ type ExportFormat = keyof typeof formatSchema;
 
 // POST /api/export - Generate export file
 export async function POST(request: NextRequest) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+  }
+
   try {
     const body = await request.json();
     const { styleId, format } = body as { styleId: string; format: string };

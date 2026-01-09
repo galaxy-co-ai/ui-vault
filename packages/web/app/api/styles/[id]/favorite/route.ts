@@ -5,6 +5,10 @@ type RouteParams = { params: Promise<{ id: string }> };
 
 // PATCH /api/styles/[id]/favorite - Toggle favorite status
 export async function PATCH(_request: NextRequest, { params }: RouteParams) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+  }
+
   try {
     const { id } = await params;
 

@@ -4,6 +4,11 @@ import { CreateStyleInputSchema } from "@/lib/schemas/style.schema";
 
 // GET /api/styles - List all styles with optional filtering
 export async function GET(request: NextRequest) {
+  // Return empty array if database is not configured
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json([]);
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
@@ -64,6 +69,13 @@ export async function GET(request: NextRequest) {
 
 // POST /api/styles - Create a new style
 export async function POST(request: NextRequest) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: "Database not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await request.json();
     const parsed = CreateStyleInputSchema.safeParse(body);

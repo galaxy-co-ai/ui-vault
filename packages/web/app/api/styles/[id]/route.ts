@@ -4,8 +4,13 @@ import { UpdateStyleInputSchema } from "@/lib/schemas/style.schema";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
+const dbNotConfigured = () =>
+  NextResponse.json({ error: "Database not configured" }, { status: 503 });
+
 // GET /api/styles/[id] - Get a single style
 export async function GET(_request: NextRequest, { params }: RouteParams) {
+  if (!process.env.DATABASE_URL) return dbNotConfigured();
+
   try {
     const { id } = await params;
 
@@ -63,6 +68,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
 // PUT /api/styles/[id] - Update a style
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  if (!process.env.DATABASE_URL) return dbNotConfigured();
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -153,6 +160,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 // DELETE /api/styles/[id] - Delete a style
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  if (!process.env.DATABASE_URL) return dbNotConfigured();
+
   try {
     const { id } = await params;
 
