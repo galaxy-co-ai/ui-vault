@@ -128,12 +128,13 @@ export default function StyleEditorPage({
   };
 
   const handleToggleFavorite = async () => {
-    if (!style) return;
-    // Capture current state before toggle to show correct message
-    const wasFavorite = style.isFavorite;
     try {
       await toggleFavorite(id);
-      toast.success(wasFavorite ? "Removed from favorites" : "Added to favorites");
+      if (style) {
+        toast.success(
+          style.isFavorite ? "Removed from favorites" : "Added to favorites"
+        );
+      }
     } catch (error) {
       logger.error("Failed to toggle favorite", error);
     }

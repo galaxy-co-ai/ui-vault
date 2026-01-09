@@ -14,8 +14,10 @@ import {
   Save,
   Moon,
   Sun,
+  Settings,
   Keyboard,
   Home,
+  Undo,
   ArrowLeft,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -285,10 +287,14 @@ export function CommandPalette() {
         // ⌘ + D = Duplicate
         if (isMeta && e.key === "d") {
           e.preventDefault();
-          duplicateStyle(currentStyleId).then((dup) => {
-            toast.success("Style duplicated", `Created "${dup.name}"`);
-            router.push(`/dashboard/styles/${dup.id}`);
-          });
+          duplicateStyle(currentStyleId)
+            .then((dup) => {
+              toast.success("Style duplicated", `Created "${dup.name}"`);
+              router.push(`/dashboard/styles/${dup.id}`);
+            })
+            .catch(() => {
+              toast.error("Duplicate failed", "Something went wrong. Please try again.");
+            });
           return;
         }
       }
