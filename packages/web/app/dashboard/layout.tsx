@@ -11,11 +11,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const loadStyles = useStyleStore((state) => state.loadStyles);
-
   useEffect(() => {
-    loadStyles();
-  }, [loadStyles]);
+    useStyleStore.getState().loadStyles();
+  }, []);
 
   return (
     <div className="flex h-screen bg-background">
