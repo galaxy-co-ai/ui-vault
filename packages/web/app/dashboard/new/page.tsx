@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStyleStore } from "@/stores";
-import { TEMPLATES, DEFAULT_TEMPLATE, createStyleFromTemplate, type StyleTemplate } from "@/lib/templates";
+import { DEFAULT_TEMPLATE, createStyleFromTemplate, type StyleTemplate } from "@/lib/templates";
 import { TemplatePicker, TemplatePreview } from "@/components/features";
 import { ArrowLeft, Palette, Sparkles } from "lucide-react";
 import Link from "next/link";
