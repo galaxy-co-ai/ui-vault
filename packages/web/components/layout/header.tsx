@@ -1,13 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useStyleStore, useUIStore } from "@/stores";
 import { Search, Command, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function Header() {
+  const [mounted, setMounted] = useState(false);
   const { searchQuery, setSearchQuery } = useStyleStore();
   const { openCommandPalette } = useUIStore();
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="flex h-14 items-center justify-between border-b border-border px-6">
@@ -43,10 +49,14 @@ export function Header() {
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
-          {theme === "dark" ? (
-            <Sun className="h-4 w-4" />
+          {mounted ? (
+            theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )
           ) : (
-            <Moon className="h-4 w-4" />
+            <div className="h-4 w-4" />
           )}
         </button>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useStyleStore, useAllTags, useUIStore } from "@/stores";
 import {
@@ -13,10 +14,18 @@ import {
 } from "lucide-react";
 
 export function Sidebar() {
+  const [mounted, setMounted] = useState(false);
   const { showFavoritesOnly, setShowFavoritesOnly, activeTag, setActiveTag, clearFilters } =
     useStyleStore();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
   const tags = useAllTags();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Use default value during SSR to avoid hydration mismatch
+  const isCollapsed = mounted ? sidebarCollapsed : false;
 
   const navItems = [
     {
@@ -41,12 +50,12 @@ export function Sidebar() {
   return (
     <aside
       className={`flex flex-col border-r border-border bg-card transition-all ${
-        sidebarCollapsed ? "w-16" : "w-64"
+        isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Logo */}
       <div className="flex h-14 items-center justify-between border-b border-border px-4">
-        {!sidebarCollapsed && (
+        {!isCollapsed && (
           <Link href="/dashboard" className="flex items-center gap-2">
             <Palette className="h-5 w-5 text-primary" />
             <span className="font-semibold">UI Vault</span>
@@ -56,7 +65,7 @@ export function Sidebar() {
           onClick={toggleSidebar}
           className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
         >
-          {sidebarCollapsed ? (
+          {isCollapsed ? (
             <ChevronRight className="h-4 w-4" />
           ) : (
             <ChevronLeft className="h-4 w-4" />
@@ -78,13 +87,13 @@ export function Sidebar() {
               }`}
             >
               <item.icon className="h-4 w-4 shrink-0" />
-              {!sidebarCollapsed && <span>{item.label}</span>}
+              {!isCollapsed && <span>{item.label}</span>}
             </button>
           ))}
         </div>
 
         {/* Tags section */}
-        {!sidebarCollapsed && tags.length > 0 && (
+        {!isCollapsed && tags.length > 0 && (
           <div className="mt-6">
             <h3 className="mb-2 px-3 text-xs font-medium uppercase text-muted-foreground">
               Tags
@@ -117,11 +126,11 @@ export function Sidebar() {
         <Link
           href="/dashboard/new"
           className={`flex items-center justify-center gap-2 rounded-md bg-primary py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 ${
-            sidebarCollapsed ? "px-2" : "px-4"
+            isCollapsed ? "px-2" : "px-4"
           }`}
         >
           <Plus className="h-4 w-4" />
-          {!sidebarCollapsed && <span>New Style</span>}
+          {!isCollapsed && <span>New Style</span>}
         </Link>
       </div>
     </aside>
