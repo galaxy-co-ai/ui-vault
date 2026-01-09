@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 import type { StyleCollection, CreateStyleInput } from "@/lib/schemas/style.schema";
 import { debounce } from "@/lib/hooks/use-debounce";
 
@@ -199,10 +200,12 @@ export const useStyleById = (id: string) =>
   useStyleStore((state) => state.styles.find((s) => s.id === id));
 
 export const useAllTags = () =>
-  useStyleStore((state) => {
-    const tagSet = new Set<string>();
-    state.styles.forEach((style) => {
-      style.tags.forEach((tag) => tagSet.add(tag));
-    });
-    return Array.from(tagSet).sort();
-  });
+  useStyleStore(
+    useShallow((state) => {
+      const tagSet = new Set<string>();
+      state.styles.forEach((style) => {
+        style.tags.forEach((tag) => tagSet.add(tag));
+      });
+      return Array.from(tagSet).sort();
+    })
+  );

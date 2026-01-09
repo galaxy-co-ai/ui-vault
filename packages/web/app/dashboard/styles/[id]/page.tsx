@@ -27,21 +27,16 @@ export default function StyleEditorPage({
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Find the style from store
+  // Find the style from store and redirect if not found
   useEffect(() => {
     const found = styles.find((s) => s.id === id);
     if (found) {
       setStyle(found);
-    }
-  }, [styles, id]);
-
-  // Fetch if not in store
-  useEffect(() => {
-    if (!style && styles.length > 0) {
-      // Style not found, redirect
+    } else if (styles.length > 0) {
+      // Style not found in a populated store, redirect
       router.push("/dashboard");
     }
-  }, [style, styles, router]);
+  }, [styles, id, router]);
 
   const handleSave = async () => {
     if (!style || !hasUnsavedChanges) return;
