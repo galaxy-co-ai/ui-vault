@@ -6,6 +6,7 @@ import { useStyleStore, useUIStore } from "@/stores";
 import { StyleEditor } from "@/components/features/style-editor";
 import { ExportDialog } from "@/components/features/export-dialog";
 import { logger } from "@/lib/logger";
+import { toast } from "@/lib/hooks/use-toast";
 import { ArrowLeft, Download, Copy, Trash2, Heart, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
@@ -66,6 +67,7 @@ export default function StyleEditorPage({
     } catch (error) {
       logger.error("Auto-save failed", error);
       setSaveStatus("error");
+      toast.error("Save failed", "Your changes couldn't be saved. Please try again.");
     }
   }, [id, updateStyle]);
 
@@ -105,9 +107,11 @@ export default function StyleEditorPage({
     setIsDeleting(true);
     try {
       await deleteStyle(id);
+      toast.success("Style deleted", "The style has been permanently removed.");
       router.push("/dashboard");
     } catch (error) {
       logger.error("Failed to delete", error);
+      toast.error("Delete failed", "Something went wrong. Please try again.");
       setIsDeleting(false);
     }
   };
@@ -115,9 +119,24 @@ export default function StyleEditorPage({
   const handleDuplicate = async () => {
     try {
       const duplicate = await duplicateStyle(id);
+      toast.success("Style duplicated", `Created "${duplicate.name}"`);
       router.push(`/dashboard/styles/${duplicate.id}`);
     } catch (error) {
       logger.error("Failed to duplicate", error);
+      toast.error("Duplicate failed", "Something went wrong. Please try again.");
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    try {
+      await toggleFavorite(id);
+      if (style) {
+        toast.success(
+          style.isFavorite ? "Removed from favorites" : "Added to favorites"
+        );
+      }
+    } catch (error) {
+      logger.error("Failed to toggle favorite", error);
     }
   };
 
@@ -128,6 +147,12 @@ export default function StyleEditorPage({
     setHasUnsavedChanges(true);
     setSaveStatus("idle");
     scheduleAutoSave(updatedStyle);
+  };
+
+  const handleVersionRestore = () => {
+    toast.success("Version restored", "The style has been restored to the selected version.");
+    // Reload the page to fetch the restored version
+    window.location.reload();
   };
 
   if (!style) {
@@ -163,7 +188,7 @@ export default function StyleEditorPage({
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => toggleFavorite(id)}
+            onClick={handleToggleFavorite}
             className={`inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent ${
               style.isFavorite ? "text-red-500" : "text-muted-foreground"
             }`}
@@ -219,7 +244,11 @@ export default function StyleEditorPage({
 
       {/* Editor */}
       <div className="flex-1 overflow-auto">
-        <StyleEditor style={style} onChange={handleStyleChange} />
+        <StyleEditor
+          style={style}
+          onChange={handleStyleChange}
+          onVersionRestore={handleVersionRestore}
+        />
       </div>
 
       {/* Export Dialog */}

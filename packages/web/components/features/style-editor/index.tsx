@@ -7,12 +7,14 @@ import { SpacingPanel } from "./spacing-panel";
 import { EffectsPanel } from "./effects-panel";
 import { PreviewPanel } from "./preview-panel";
 import { AccessibilityPanel } from "./accessibility-panel";
+import { VersionHistory } from "../version-history";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
 import { Eye, Palette, Type, Ruler, Sparkles } from "lucide-react";
 
 interface StyleEditorProps {
   style: StyleCollection;
   onChange: (updates: Partial<StyleCollection>) => void;
+  onVersionRestore?: () => void;
 }
 
 const tabs = [
@@ -25,7 +27,7 @@ const tabs = [
 
 type TabId = (typeof tabs)[number]["id"];
 
-export function StyleEditor({ style, onChange }: StyleEditorProps) {
+export function StyleEditor({ style, onChange, onVersionRestore }: StyleEditorProps) {
   const [activeTab, setActiveTab] = useState<TabId>("colors");
 
   return (
@@ -91,8 +93,15 @@ export function StyleEditor({ style, onChange }: StyleEditorProps) {
       </div>
 
       {/* Preview panel */}
-      <div className="w-96 overflow-auto bg-muted/30">
-        <PreviewPanel style={style} />
+      <div className="flex w-96 flex-col overflow-auto bg-muted/30">
+        <div className="flex-1">
+          <PreviewPanel style={style} />
+        </div>
+        {/* Version History at bottom of preview panel */}
+        <VersionHistory
+          styleId={style.id}
+          onRestore={onVersionRestore || (() => window.location.reload())}
+        />
       </div>
     </div>
   );
