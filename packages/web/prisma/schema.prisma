@@ -32,7 +32,8 @@ model Style {
   lastUsedAt DateTime?
 
   // Relations
-  tags StyleTag[]
+  tags     StyleTag[]
+  versions StyleVersion[]
 
   @@index([name])
   @@index([updatedAt(sort: Desc)])
@@ -57,4 +58,30 @@ model StyleTag {
   tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([styleId, tagId])
+}
+
+model StyleVersion {
+  id        String   @id @default(uuid())
+  styleId   String
+  
+  // Snapshot of all style data at this version
+  name        String
+  colorsLight Json
+  colorsDark  Json
+  typography  Json
+  spacing     Json
+  borderRadius Json
+  shadows     Json
+  animation   Json
+  
+  // Version metadata
+  versionNumber Int
+  changeNote    String?
+  createdAt     DateTime @default(now())
+  
+  // Relation
+  style Style @relation(fields: [styleId], references: [id], onDelete: Cascade)
+
+  @@index([styleId, createdAt(sort: Desc)])
+  @@index([styleId, versionNumber])
 }

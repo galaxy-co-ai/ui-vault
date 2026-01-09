@@ -6,7 +6,9 @@ import { TypographyPanel } from "./typography-panel";
 import { SpacingPanel } from "./spacing-panel";
 import { EffectsPanel } from "./effects-panel";
 import { PreviewPanel } from "./preview-panel";
+import { AccessibilityPanel } from "./accessibility-panel";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
+import { Eye, Palette, Type, Ruler, Sparkles } from "lucide-react";
 
 interface StyleEditorProps {
   style: StyleCollection;
@@ -14,10 +16,11 @@ interface StyleEditorProps {
 }
 
 const tabs = [
-  { id: "colors", label: "Colors" },
-  { id: "typography", label: "Typography" },
-  { id: "spacing", label: "Spacing" },
-  { id: "effects", label: "Effects" },
+  { id: "colors", label: "Colors", icon: Palette },
+  { id: "typography", label: "Typography", icon: Type },
+  { id: "spacing", label: "Spacing", icon: Ruler },
+  { id: "effects", label: "Effects", icon: Sparkles },
+  { id: "accessibility", label: "Accessibility", icon: Eye },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -31,19 +34,23 @@ export function StyleEditor({ style, onChange }: StyleEditorProps) {
       <div className="flex-1 overflow-auto border-r border-border">
         {/* Tabs */}
         <div className="sticky top-0 z-10 flex gap-1 border-b border-border bg-background p-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Panel content */}
@@ -72,6 +79,12 @@ export function StyleEditor({ style, onChange }: StyleEditorProps) {
               shadows={style.shadows}
               animation={style.animation}
               onChange={onChange}
+            />
+          )}
+          {activeTab === "accessibility" && (
+            <AccessibilityPanel
+              colors={style.colors}
+              onChange={(colors) => onChange({ colors })}
             />
           )}
         </div>

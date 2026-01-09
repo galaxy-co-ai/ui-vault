@@ -1,14 +1,17 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useStyleStore, useUIStore } from "@/stores";
 import { StyleEditor } from "@/components/features/style-editor";
 import { ExportDialog } from "@/components/features/export-dialog";
 import { logger } from "@/lib/logger";
-import { ArrowLeft, Download, Copy, Trash2, Heart } from "lucide-react";
+import { ArrowLeft, Download, Copy, Trash2, Heart, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
+
+// Auto-save delay in milliseconds
+const AUTO_SAVE_DELAY = 2000;
 
 export default function StyleEditorPage({
   params,
@@ -24,8 +27,12 @@ export default function StyleEditorPage({
 
   const [style, setStyle] = useState<StyleCollection | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Refs for auto-save
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingStyleRef = useRef<StyleCollection | null>(null);
 
   // Find the style from store and redirect if not found
   useEffect(() => {
@@ -38,18 +45,58 @@ export default function StyleEditorPage({
     }
   }, [styles, id, router]);
 
-  const handleSave = async () => {
-    if (!style || !hasUnsavedChanges) return;
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
-    setIsSaving(true);
+  // Auto-save function
+  const performSave = useCallback(async (styleToSave: StyleCollection) => {
+    setSaveStatus("saving");
     try {
-      await updateStyle(id, style);
+      await updateStyle(id, styleToSave);
       setHasUnsavedChanges(false);
+      setSaveStatus("saved");
+      // Reset status after 2 seconds
+      setTimeout(() => setSaveStatus("idle"), 2000);
     } catch (error) {
-      logger.error("Failed to save", error);
-    } finally {
-      setIsSaving(false);
+      logger.error("Auto-save failed", error);
+      setSaveStatus("error");
     }
+  }, [id, updateStyle]);
+
+  // Schedule auto-save
+  const scheduleAutoSave = useCallback((updatedStyle: StyleCollection) => {
+    pendingStyleRef.current = updatedStyle;
+    
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    // Schedule new save
+    saveTimeoutRef.current = setTimeout(() => {
+      if (pendingStyleRef.current) {
+        performSave(pendingStyleRef.current);
+        pendingStyleRef.current = null;
+      }
+    }, AUTO_SAVE_DELAY);
+  }, [performSave]);
+
+  const handleSaveNow = async () => {
+    if (!style || !hasUnsavedChanges) return;
+    
+    // Cancel any pending auto-save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+    
+    await performSave(style);
   };
 
   const handleDelete = async () => {
@@ -76,8 +123,11 @@ export default function StyleEditorPage({
 
   const handleStyleChange = (updates: Partial<StyleCollection>) => {
     if (!style) return;
-    setStyle({ ...style, ...updates });
+    const updatedStyle = { ...style, ...updates };
+    setStyle(updatedStyle);
     setHasUnsavedChanges(true);
+    setSaveStatus("idle");
+    scheduleAutoSave(updatedStyle);
   };
 
   if (!style) {
@@ -99,18 +149,15 @@ export default function StyleEditorPage({
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div>
+          <div className="flex items-center gap-3">
             <input
               type="text"
               value={style.name}
               onChange={(e) => handleStyleChange({ name: e.target.value })}
               className="bg-transparent text-lg font-semibold focus:outline-none"
             />
-            {hasUnsavedChanges && (
-              <span className="ml-2 text-xs text-muted-foreground">
-                (unsaved changes)
-              </span>
-            )}
+            {/* Save Status Indicator */}
+            <SaveStatusIndicator status={saveStatus} hasUnsavedChanges={hasUnsavedChanges} />
           </div>
         </div>
 
@@ -121,6 +168,7 @@ export default function StyleEditorPage({
               style.isFavorite ? "text-red-500" : "text-muted-foreground"
             }`}
             title={style.isFavorite ? "Remove from favorites" : "Add to favorites"}
+            aria-label={style.isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart className={`h-4 w-4 ${style.isFavorite ? "fill-current" : ""}`} />
           </button>
@@ -129,6 +177,7 @@ export default function StyleEditorPage({
             onClick={handleDuplicate}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             title="Duplicate"
+            aria-label="Duplicate style"
           >
             <Copy className="h-4 w-4" />
           </button>
@@ -146,16 +195,24 @@ export default function StyleEditorPage({
             disabled={isDeleting}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
             title="Delete"
+            aria-label="Delete style"
           >
             <Trash2 className="h-4 w-4" />
           </button>
 
           <button
-            onClick={handleSave}
-            disabled={!hasUnsavedChanges || isSaving}
+            onClick={handleSaveNow}
+            disabled={!hasUnsavedChanges || saveStatus === "saving"}
             className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
           >
-            {isSaving ? "Saving..." : "Save"}
+            {saveStatus === "saving" ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Now"
+            )}
           </button>
         </div>
       </div>
@@ -171,4 +228,48 @@ export default function StyleEditorPage({
       )}
     </div>
   );
+}
+
+// Save Status Indicator Component
+interface SaveStatusIndicatorProps {
+  status: "idle" | "saving" | "saved" | "error";
+  hasUnsavedChanges: boolean;
+}
+
+function SaveStatusIndicator({ status, hasUnsavedChanges }: SaveStatusIndicatorProps) {
+  if (status === "saving") {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Loader2 className="h-3 w-3 animate-spin" />
+        Saving...
+      </span>
+    );
+  }
+
+  if (status === "saved") {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+        <Check className="h-3 w-3" />
+        Saved
+      </span>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <span className="text-xs text-red-600 dark:text-red-400">
+        Save failed - click Save Now to retry
+      </span>
+    );
+  }
+
+  if (hasUnsavedChanges) {
+    return (
+      <span className="text-xs text-muted-foreground">
+        Auto-saving...
+      </span>
+    );
+  }
+
+  return null;
 }
