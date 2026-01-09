@@ -77,6 +77,7 @@ export const useUIStore = create<UIStore>()(
           previewMode: state.previewMode,
           exportFormat: state.exportFormat,
         }),
+        skipHydration: true,
       }
     ),
     { name: "ui-store" }
