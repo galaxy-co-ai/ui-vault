@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Style {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+
+  // JSON columns for nested design token data
+  colorsLight  Json // ColorPaletteSchema
+  colorsDark   Json // ColorPaletteSchema
+  typography   Json // TypographySchema
+  spacing      Json // SpacingScaleSchema
+  borderRadius Json // BorderRadiusSchema
+  shadows      Json // ShadowsSchema
+  animation    Json // AnimationSchema
+
+  // Metadata
+  thumbnail  String?
+  isFavorite Boolean @default(false)
+  usageCount Int     @default(0)
+
+  // Timestamps
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lastUsedAt DateTime?
+
+  // Relations
+  tags StyleTag[]
+
+  @@index([name])
+  @@index([updatedAt(sort: Desc)])
+  @@index([isFavorite])
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  styles StyleTag[]
+
+  @@index([name])
+}
+
+model StyleTag {
+  styleId String
+  tagId   String
+
+  style Style @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([styleId, tagId])
+}

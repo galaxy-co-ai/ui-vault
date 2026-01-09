@@ -1,0 +1,30 @@
+{
+  "name": "ui-vault",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A production-ready, animation-first UI component library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ui-vault"
+  },
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@9.15.1",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

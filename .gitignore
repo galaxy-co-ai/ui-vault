@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+out/
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Debug logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+
+# Cache
+.cache/
+.eslintcache
+
+# Vercel
+.vercel/
+
+# Prisma
+packages/web/prisma/migrations/
+
+# Local database
+*.db
+*.sqlite
+
+# AI assistant files
+.ai/
