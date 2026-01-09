@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/client";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -73,7 +74,7 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(transformed, { status: 201 });
   } catch (error) {
-    console.error("Failed to duplicate style:", error);
+    logger.error("Failed to duplicate style", error);
     return NextResponse.json(
       { error: "Failed to duplicate style" },
       { status: 500 }

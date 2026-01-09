@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/client";
 import { UpdateStyleInputSchema } from "@/lib/schemas/style.schema";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -58,7 +59,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(transformed);
   } catch (error) {
-    console.error("Failed to fetch style:", error);
+    logger.error("Failed to fetch style", error);
     return NextResponse.json(
       { error: "Failed to fetch style" },
       { status: 500 }
@@ -150,7 +151,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(transformed);
   } catch (error) {
-    console.error("Failed to update style:", error);
+    logger.error("Failed to update style", error);
     return NextResponse.json(
       { error: "Failed to update style" },
       { status: 500 }
@@ -174,7 +175,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Failed to delete style:", error);
+    logger.error("Failed to delete style", error);
     return NextResponse.json(
       { error: "Failed to delete style" },
       { status: 500 }

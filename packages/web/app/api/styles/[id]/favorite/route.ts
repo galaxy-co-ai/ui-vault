@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/client";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -49,7 +50,7 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(transformed);
   } catch (error) {
-    console.error("Failed to toggle favorite:", error);
+    logger.error("Failed to toggle favorite", error);
     return NextResponse.json(
       { error: "Failed to toggle favorite" },
       { status: 500 }

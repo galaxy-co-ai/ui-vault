@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { StyleCollection, CreateStyleInput } from "@/lib/schemas/style.schema";
+import { debounce } from "@/lib/hooks/use-debounce";
 
 interface StyleStore {
   // Data
@@ -157,7 +158,8 @@ export const useStyleStore = create<StyleStore>()(
       // Search & Filter
       setSearchQuery: (query) => {
         set({ searchQuery: query });
-        get().loadStyles();
+        // Use debounced load to prevent excessive API calls during typing
+        debouncedLoadStyles();
       },
 
       setShowFavoritesOnly: (show) => {
@@ -172,12 +174,20 @@ export const useStyleStore = create<StyleStore>()(
 
       clearFilters: () => {
         set({ searchQuery: "", showFavoritesOnly: false, activeTag: null });
+        // Cancel any pending debounced search
+        debouncedLoadStyles.cancel();
         get().loadStyles();
       },
     }),
     { name: "style-store" }
   )
 );
+
+// Debounced version of loadStyles for search queries
+// 300ms delay prevents excessive API calls while user is typing
+const debouncedLoadStyles = debounce(() => {
+  useStyleStore.getState().loadStyles();
+}, 300);
 
 // Selectors
 export const useSelectedStyle = () =>

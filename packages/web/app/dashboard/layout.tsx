@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { ClientOnly } from "@/components/providers/client-only";
+import { ErrorBoundary } from "@/components/providers/error-boundary";
 import { useStyleStore } from "@/stores";
 
 function DashboardSkeleton() {
@@ -37,7 +38,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-auto">{children}</main>
+        <main className="flex-1 overflow-auto">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </main>
       </div>
       <CommandPalette />
     </div>

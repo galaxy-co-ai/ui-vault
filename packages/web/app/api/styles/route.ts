@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/client";
 import { CreateStyleInputSchema } from "@/lib/schemas/style.schema";
+import { logger } from "@/lib/logger";
 
 // GET /api/styles - List all styles with optional filtering
 export async function GET(request: NextRequest) {
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(transformed);
   } catch (error) {
-    console.error("Failed to fetch styles:", error);
+    logger.error("Failed to fetch styles", error);
     return NextResponse.json(
       { error: "Failed to fetch styles" },
       { status: 500 }
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(transformed, { status: 201 });
   } catch (error) {
-    console.error("Failed to create style:", error);
+    logger.error("Failed to create style", error);
     return NextResponse.json(
       { error: "Failed to create style" },
       { status: 500 }

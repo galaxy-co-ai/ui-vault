@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useStyleStore, useUIStore } from "@/stores";
 import { StyleEditor } from "@/components/features/style-editor";
 import { ExportDialog } from "@/components/features/export-dialog";
+import { logger } from "@/lib/logger";
 import { ArrowLeft, Download, Copy, Trash2, Heart } from "lucide-react";
 import Link from "next/link";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
@@ -50,7 +51,7 @@ export default function StyleEditorPage({
       await updateStyle(id, style);
       setHasUnsavedChanges(false);
     } catch (error) {
-      console.error("Failed to save:", error);
+      logger.error("Failed to save", error);
     } finally {
       setIsSaving(false);
     }
@@ -64,7 +65,7 @@ export default function StyleEditorPage({
       await deleteStyle(id);
       router.push("/dashboard");
     } catch (error) {
-      console.error("Failed to delete:", error);
+      logger.error("Failed to delete", error);
       setIsDeleting(false);
     }
   };
@@ -74,7 +75,7 @@ export default function StyleEditorPage({
       const duplicate = await duplicateStyle(id);
       router.push(`/dashboard/styles/${duplicate.id}`);
     } catch (error) {
-      console.error("Failed to duplicate:", error);
+      logger.error("Failed to duplicate", error);
     }
   };
 

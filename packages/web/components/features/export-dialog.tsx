@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useUIStore, useStyleById } from "@/stores";
+import { logger } from "@/lib/logger";
 import { X, Download, FileCode, FileJson, FileText, Check } from "lucide-react";
 
 interface ExportDialogProps {
@@ -71,7 +72,7 @@ export function ExportDialog({ styleId, onClose }: ExportDialogProps) {
       setExported(true);
       setTimeout(() => setExported(false), 2000);
     } catch (error) {
-      console.error("Export failed:", error);
+      logger.error("Export failed", error);
     } finally {
       setIsExporting(false);
     }

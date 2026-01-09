@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/client";
 import { generateTailwindConfig } from "@/lib/exporters/tailwind";
 import { generateCSSVariables } from "@/lib/exporters/css";
 import { generateJSONTokens } from "@/lib/exporters/json";
+import { logger } from "@/lib/logger";
 import type { StyleCollection } from "@/lib/schemas/style.schema";
 
 const formatSchema = {
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to generate export:", error);
+    logger.error("Failed to generate export", error);
     return NextResponse.json(
       { error: "Failed to generate export" },
       { status: 500 }

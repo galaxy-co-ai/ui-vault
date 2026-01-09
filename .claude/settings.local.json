@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter @ui-vault/web test:run:*)"
+    ]
+  }
+}
