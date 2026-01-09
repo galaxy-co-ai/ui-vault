@@ -14,10 +14,8 @@ import {
   Save,
   Moon,
   Sun,
-  Settings,
   Keyboard,
   Home,
-  Undo,
   ArrowLeft,
 } from "lucide-react";
 import { useTheme } from "next-themes";
