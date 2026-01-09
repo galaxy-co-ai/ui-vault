@@ -668,6 +668,9 @@ export const TEMPLATES: StyleTemplate[] = [
   BLANK_TEMPLATE,
 ];
 
+// Default template guaranteed to exist
+export const DEFAULT_TEMPLATE: StyleTemplate = MINIMAL_TEMPLATE;
+
 export function getTemplateById(id: string): StyleTemplate | undefined {
   return TEMPLATES.find((t) => t.id === id);
 }

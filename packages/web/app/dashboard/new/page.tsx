@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStyleStore } from "@/stores";
-import { TEMPLATES, createStyleFromTemplate, type StyleTemplate } from "@/lib/templates";
+import { TEMPLATES, DEFAULT_TEMPLATE, createStyleFromTemplate, type StyleTemplate } from "@/lib/templates";
 import { TemplatePicker, TemplatePreview } from "@/components/features";
 import { ArrowLeft, Palette, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -15,10 +15,10 @@ export default function NewStylePage() {
   const createStyle = useStyleStore((state) => state.createStyle);
   
   const [step, setStep] = useState<Step>("template");
-  const [selectedTemplate, setSelectedTemplate] = useState<StyleTemplate>(TEMPLATES[0]);
+  const [selectedTemplate, setSelectedTemplate] = useState<StyleTemplate>(DEFAULT_TEMPLATE);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [seedColor, setSeedColor] = useState(TEMPLATES[0].preview.accent);
+  const [seedColor, setSeedColor] = useState(DEFAULT_TEMPLATE.preview.accent);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
