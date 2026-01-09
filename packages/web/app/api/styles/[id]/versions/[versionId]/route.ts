@@ -4,7 +4,7 @@ import { logger } from "@/lib/logger";
 
 // GET /api/styles/[id]/versions/[versionId] - Get a specific version
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string; versionId: string }> }
 ) {
   try {
@@ -30,7 +30,7 @@ export async function GET(
 
 // POST /api/styles/[id]/versions/[versionId]/restore - Restore a version
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string; versionId: string }> }
 ) {
   try {
@@ -111,7 +111,7 @@ export async function POST(
 
 // DELETE /api/styles/[id]/versions/[versionId] - Delete a specific version
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string; versionId: string }> }
 ) {
   try {
