@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/client";
 type RouteParams = { params: Promise<{ id: string }> };
 
 // POST /api/styles/[id]/duplicate - Duplicate a style
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         isFavorite: false,
         usageCount: 0,
         tags: {
-          create: original.tags.map((t) => ({
+          create: original.tags.map((t: { tagId: string }) => ({
             tag: { connect: { id: t.tagId } },
           })),
         },
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       id: duplicate.id,
       name: duplicate.name,
       description: duplicate.description,
-      tags: duplicate.tags.map((t) => t.tag.name),
+      tags: duplicate.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: duplicate.colorsLight,
         dark: duplicate.colorsDark,

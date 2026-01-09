@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       id: style.id,
       name: style.name,
       description: style.description ?? undefined,
-      tags: style.tags.map((t) => t.tag.name),
+      tags: style.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: style.colorsLight as StyleCollection["colors"]["light"],
         dark: style.colorsDark as StyleCollection["colors"]["dark"],

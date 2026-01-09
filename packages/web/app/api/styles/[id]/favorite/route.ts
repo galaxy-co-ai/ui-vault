@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/client";
 type RouteParams = { params: Promise<{ id: string }> };
 
 // PATCH /api/styles/[id]/favorite - Toggle favorite status
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -25,7 +25,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       id: updated.id,
       name: updated.name,
       description: updated.description,
-      tags: updated.tags.map((t) => t.tag.name),
+      tags: updated.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: updated.colorsLight,
         dark: updated.colorsDark,

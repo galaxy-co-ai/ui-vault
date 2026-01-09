@@ -1,10 +1,10 @@
 import { Palette } from "lucide-react";
-import type { ReactNode } from "react";
+import type { JSX } from "react";
 
 interface EmptyStateProps {
   title: string;
   description: string;
-  action?: ReactNode;
+  action?: JSX.Element;
 }
 
 export function EmptyState({ title, description, action }: EmptyStateProps) {

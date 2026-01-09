@@ -84,5 +84,3 @@ export function StyleEditor({ style, onChange }: StyleEditorProps) {
     </div>
   );
 }
-
-export { StyleEditor };

@@ -5,7 +5,7 @@ import { UpdateStyleInputSchema } from "@/lib/schemas/style.schema";
 type RouteParams = { params: Promise<{ id: string }> };
 
 // GET /api/styles/[id] - Get a single style
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       id: style.id,
       name: style.name,
       description: style.description,
-      tags: style.tags.map((t) => t.tag.name),
+      tags: style.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: style.colorsLight,
         dark: style.colorsDark,
@@ -90,12 +90,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Update style
-    const style = await prisma.style.update({
+    await prisma.style.update({
       where: { id },
       data,
-      include: {
-        tags: { include: { tag: true } },
-      },
     });
 
     // Update tags if provided
@@ -126,7 +123,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       id: updated!.id,
       name: updated!.name,
       description: updated!.description,
-      tags: updated!.tags.map((t) => t.tag.name),
+      tags: updated!.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: updated!.colorsLight,
         dark: updated!.colorsDark,
@@ -155,7 +152,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/styles/[id] - Delete a style
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 

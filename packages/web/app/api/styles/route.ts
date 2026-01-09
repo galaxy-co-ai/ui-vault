@@ -30,11 +30,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform to match frontend schema
-    const transformed = styles.map((style) => ({
+    const transformed = styles.map((style: (typeof styles)[number]) => ({
       id: style.id,
       name: style.name,
       description: style.description,
-      tags: style.tags.map((t) => t.tag.name),
+      tags: style.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: style.colorsLight,
         dark: style.colorsDark,
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       id: style.id,
       name: style.name,
       description: style.description,
-      tags: style.tags.map((t) => t.tag.name),
+      tags: style.tags.map((t: { tag: { name: string } }) => t.tag.name),
       colors: {
         light: style.colorsLight,
         dark: style.colorsDark,

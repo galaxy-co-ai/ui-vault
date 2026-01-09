@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useStyleStore, useAllTags, useUIStore } from "@/stores";
 import {
   LayoutGrid,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 
 export function Sidebar() {
-  const pathname = usePathname();
   const { showFavoritesOnly, setShowFavoritesOnly, activeTag, setActiveTag, clearFilters } =
     useStyleStore();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();

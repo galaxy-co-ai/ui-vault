@@ -3,20 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStyleStore, useUIStore } from "@/stores";
-import {
-  Plus,
-  Search,
-  Settings,
-  FileDown,
-  Copy,
-  Trash2,
-  Heart,
-} from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 export function CommandPalette() {
   const router = useRouter();
-  const { styles, duplicateStyle, deleteStyle, toggleFavorite } = useStyleStore();
-  const { commandPaletteOpen, closeCommandPalette, openExportDialog } = useUIStore();
+  const { styles } = useStyleStore();
+  const { commandPaletteOpen, closeCommandPalette } = useUIStore();
   const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 

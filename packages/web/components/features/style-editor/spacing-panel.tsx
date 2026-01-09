@@ -29,7 +29,7 @@ export function SpacingPanel({ spacing, onChange }: SpacingPanelProps) {
 
         <div className="space-y-3">
           {spacingKeys.map((key) => {
-            const value = spacing[key as keyof typeof spacing];
+            const value = spacing[key as unknown as keyof typeof spacing];
             const numericValue = parseInt(value);
             const barWidth = Math.min(numericValue * 2, 200);
 
@@ -42,7 +42,7 @@ export function SpacingPanel({ spacing, onChange }: SpacingPanelProps) {
                   type="text"
                   value={value}
                   onChange={(e) =>
-                    updateSpacing(key as keyof typeof spacing, e.target.value)
+                    updateSpacing(key as unknown as keyof typeof spacing, e.target.value)
                   }
                   className="w-24 rounded-md border border-input bg-background px-2 py-1 text-sm"
                 />
